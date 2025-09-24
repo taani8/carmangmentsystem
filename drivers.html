@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drivers - Driver Management System</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/drivers.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>Driver Management</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="drivers.html" class="nav-link active">Drivers</a>
+                <a href="trips.html" class="nav-link">Trips</a>
+                <a href="reports.html" class="nav-link">Reports</a>
+                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+            </div>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Driver Management</h1>
+                <button id="addDriverBtn" class="btn btn-primary">Add New Driver</button>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="filters">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search drivers...">
+                </div>
+                <div class="filter-options">
+                    <select id="balanceFilter">
+                        <option value="all">All Drivers</option>
+                        <option value="positive">Positive Balance</option>
+                        <option value="zero">Zero Balance</option>
+                        <option value="negative">Negative Balance</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Drivers Table -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driversTableBody">
+                        <tr>
+                            <td colspan="5" class="no-data">Loading drivers...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Driver Modal -->
+    <div id="driverModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Driver</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="driverForm" class="modal-form">
+                <div class="form-group">
+                    <label for="driverName">Driver Name *</label>
+                    <input type="text" id="driverName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="driverPhone">Phone Number *</label>
+                    <input type="tel" id="driverPhone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="driverPhoto">Driver Photo</label>
+                    <input type="file" id="driverPhoto" accept="image/*">
+                    <div id="photoPreview" class="photo-preview" style="display: none;">
+                        <img id="previewImage" src="" alt="Driver photo preview">
+                        <button type="button" id="removePhoto" class="remove-photo-btn">&times;</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="driverBalance">Starting Balance (JOD) *</label>
+                    <input type="number" id="driverBalance" step="0.01" min="0" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveDriverBtn">Save Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Driver</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this driver? This action cannot be undone.</p>
+                <p><strong id="deleteDriverName"></strong></p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <script src="js/config.js"></script>
+    <script src="js/auth-check.js"></script>
+    <script src="js/drivers.js"></script>
+</body>
+</html>

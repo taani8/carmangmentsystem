@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Driver Management System</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/reports.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>Driver Management</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="drivers.html" class="nav-link">Drivers</a>
+                <a href="trips.html" class="nav-link">Trips</a>
+                <a href="reports.html" class="nav-link active">Reports</a>
+                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+            </div>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Reports & Analytics</h1>
+                <button id="exportBtn" class="btn btn-secondary">Export to CSV</button>
+            </div>
+
+            <!-- Report Filters -->
+            <div class="report-filters">
+                <div class="filter-card">
+                    <h3>Date Range</h3>
+                    <div class="date-inputs">
+                        <input type="date" id="startDate">
+                        <input type="date" id="endDate">
+                        <button id="applyFiltersBtn" class="btn btn-primary">Apply</button>
+                    </div>
+                </div>
+                
+                <div class="filter-card">
+                    <h3>Quick Filters</h3>
+                    <div class="quick-filters">
+                        <button class="filter-btn active" data-period="today">Today</button>
+                        <button class="filter-btn" data-period="week">This Week</button>
+                        <button class="filter-btn" data-period="month">This Month</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Total Commission</h3>
+                    <div class="summary-value" id="totalCommission">0 JOD</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Trips</h3>
+                    <div class="summary-value" id="totalTrips">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Average Commission</h3>
+                    <div class="summary-value" id="avgCommission">0 JOD</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Active Drivers</h3>
+                    <div class="summary-value" id="activeDrivers">0</div>
+                </div>
+            </div>
+
+            <!-- Trip Type Analysis -->
+            <div class="analysis-section">
+                <h2>Trip Type Analysis</h2>
+                <div class="chart-container">
+                    <div id="tripTypeChart" class="chart">
+                        <div class="chart-item">
+                            <div class="chart-label">Airport</div>
+                            <div class="chart-bar">
+                                <div class="chart-fill" data-type="Airport" style="width: 0%;"></div>
+                            </div>
+                            <div class="chart-value" id="airportCount">0</div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="chart-label">Families</div>
+                            <div class="chart-bar">
+                                <div class="chart-fill" data-type="Families" style="width: 0%;"></div>
+                            </div>
+                            <div class="chart-value" id="familiesCount">0</div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="chart-label">Passengers</div>
+                            <div class="chart-bar">
+                                <div class="chart-fill" data-type="Passengers" style="width: 0%;"></div>
+                            </div>
+                            <div class="chart-value" id="passengersCount">0</div>
+                        </div>
+                        <div class="chart-item">
+                            <div class="chart-label">Drive</div>
+                            <div class="chart-bar">
+                                <div class="chart-fill" data-type="Drive" style="width: 0%;"></div>
+                            </div>
+                            <div class="chart-value" id="driveCount">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Drivers -->
+            <div class="top-drivers-section">
+                <h2>Most Active Drivers</h2>
+                <div class="drivers-ranking">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Driver</th>
+                                    <th>Trips</th>
+                                    <th>Commission Generated</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topDriversBody">
+                                <tr>
+                                    <td colspan="5" class="no-data">Loading driver statistics...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Balance Alert -->
+            <div class="alert-section">
+                <h2>Balance Alerts</h2>
+                <div id="lowBalanceAlert" class="alert-container">
+                    <div class="no-alerts">No drivers with low balance</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <script src="js/config.js"></script>
+    <script src="js/auth-check.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+</html>

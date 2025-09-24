@@ -1,0 +1,194 @@
+/* Trip Management Styles */
+.trip-summary {
+    background: linear-gradient(135deg, #000000 0%, #333333 100%);
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.trip-summary h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-stat {
+    text-align: center;
+}
+
+.summary-stat .value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.summary-stat .label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+/* Trip Type Colors */
+.trip-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.trip-type-airport {
+    background-color: #f8f8f8;
+    color: #000000;
+}
+
+.trip-type-families {
+    background-color: #f0f0f0;
+    color: #1a1a1a;
+}
+
+.trip-type-passengers {
+    background-color: #f5f5f5;
+    color: #333333;
+}
+
+.trip-type-drive {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/* Amount display */
+.amount {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.amount-positive {
+    color: #000000;
+}
+
+.amount-commission {
+    color: #333333;
+}
+
+.amount-deduction {
+    color: #666666;
+}
+
+/* Trip form specific */
+.trip-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.trip-form-grid .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group.calculation {
+    background: #fafafa;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #f0f0f0;
+}
+
+.form-group.calculation label {
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.balance-warning {
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    color: #333333;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+/* Quick filters for trips */
+.quick-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-chip {
+    padding: 0.5rem 1rem;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-chip:hover {
+    border-color: #000000;
+    color: #000000;
+}
+
+.filter-chip.active {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .trip-summary {
+        padding: 1.5rem;
+    }
+    
+    .summary-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .trip-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-filters {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-stat .value {
+        font-size: 1.5rem;
+    }
+    
+    .filter-chip {
+        flex: 1;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .trip-summary {
+        padding: 1.25rem;
+    }
+}

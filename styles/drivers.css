@@ -1,0 +1,239 @@
+/* Driver Management Styles */
+.drivers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.driver-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #f0f0f0;
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.driver-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    border-color: #e0e0e0;
+}
+
+.driver-card.low-balance {
+    border-left: 4px solid #000000;
+}
+
+.driver-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.driver-info h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.driver-info p {
+    color: #666666;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0 0;
+    font-weight: 500;
+}
+
+.balance-display {
+    text-align: right;
+}
+
+.balance-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.balance-positive {
+    color: #000000;
+}
+
+.balance-warning {
+    color: #333333;
+}
+
+.balance-danger {
+    color: #666666;
+}
+
+.driver-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+}
+
+.driver-actions .btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+}
+
+/* Table view toggle */
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.view-btn {
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    color: #666666;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.view-btn.active {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+.view-btn:hover {
+    border-color: #000000;
+    color: #000000;
+}
+
+.view-btn.active:hover {
+    background: #333333;
+    color: #ffffff;
+}
+
+/* Form specific styles */
+.driver-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.driver-form-grid .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Photo upload styles */
+.photo-preview {
+    margin-top: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.photo-preview img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 2px solid #f0f0f0;
+}
+
+.remove-photo-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.remove-photo-btn:hover {
+    background: #333333;
+    transform: scale(1.1);
+}
+
+.driver-photo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid #f0f0f0;
+}
+
+.driver-photo-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666666;
+    font-size: 18px;
+    font-weight: 600;
+    border: 2px solid #f0f0f0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .drivers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .driver-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .balance-display {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .driver-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
+    
+    .view-toggle {
+        justify-content: center;
+    }
+
+    .driver-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .driver-card {
+        padding: 1.5rem;
+    }
+
+    .balance-amount {
+        font-size: 1.25rem;
+    }
+
+    .driver-actions {
+        flex-direction: column;
+    }
+
+    .driver-actions .btn {
+        justify-content: center;
+    }
+}

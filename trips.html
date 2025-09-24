@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trips - Driver Management System</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/trips.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>Driver Management</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="drivers.html" class="nav-link">Drivers</a>
+                <a href="trips.html" class="nav-link active">Trips</a>
+                <a href="reports.html" class="nav-link">Reports</a>
+                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+            </div>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Trip Management</h1>
+                <button id="addTripBtn" class="btn btn-primary">Add New Trip</button>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="filters">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search trips...">
+                </div>
+                <div class="filter-options">
+                    <select id="driverFilter">
+                        <option value="all">All Drivers</option>
+                    </select>
+                    <select id="typeFilter">
+                        <option value="all">All Types</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Families">Families</option>
+                        <option value="Passengers">Passengers</option>
+                        <option value="Drive">Drive (Express)</option>
+                    </select>
+                    <input type="date" id="dateFilter">
+                </div>
+            </div>
+
+            <!-- Trips Table -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Driver</th>
+                            <th>Type</th>
+                            <th>Fare</th>
+                            <th>Commission</th>
+                            <th>Deduction</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tripsTableBody">
+                        <tr>
+                            <td colspan="7" class="no-data">Loading trips...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Trip Modal -->
+    <div id="tripModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Trip</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="tripForm" class="modal-form">
+                <div class="form-group">
+                    <label for="tripDriver">Driver *</label>
+                    <select id="tripDriver" required>
+                        <option value="">Select Driver</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tripType">Trip Type *</label>
+                    <select id="tripType" required>
+                        <option value="">Select Type</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Families">Families</option>
+                        <option value="Passengers">Passengers</option>
+                        <option value="Drive">Drive (Express)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tripFare">Fare Amount (JOD) *</label>
+                    <input type="number" id="tripFare" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tripCommission">Commission (JOD) *</label>
+                    <input type="number" id="tripCommission" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tripDeduction">Deduction from Balance (JOD) *</label>
+                    <input type="number" id="tripDeduction" step="0.01" min="0" required>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveTripBtn">Save Trip</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Trip</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this trip? This action cannot be undone and will affect the driver's balance.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
+    <script src="js/config.js"></script>
+    <script src="js/auth-check.js"></script>
+    <script src="js/trips.js"></script>
+</body>
+</html>
