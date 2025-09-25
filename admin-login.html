@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول المشرف</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-card { max-width: 440px; margin: 0 auto; }
+        .auth-error { color: #b00020; margin-top: .5rem; display:none; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body dir="rtl" class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="public/logo.jpg" alt="Ride On Time" class="auth-logo">
+                <h1>دخول المشرف</h1>
+                <p class="auth-subtitle">أدخل بريدك الإلكتروني وكلمة المرور</p>
+            </div>
+
+            <form id="adminLoginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="adminEmail">البريد الإلكتروني</label>
+                    <input type="email" id="adminEmail" placeholder="name@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">كلمة المرور</label>
+                    <input type="password" id="adminPassword" placeholder="••••••••" required>
+                </div>
+                <div id="errorMessage" class="auth-error"></div>
+                <button id="adminLoginBtn" type="submit" class="btn btn-primary" style="width: 100%;">تسجيل الدخول</button>
+            </form>
+
+            <div class="auth-footer" style="margin-top: .75rem;">
+                <a href="driver.html">بوابة السائق</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/supabase-config.js"></script>
+    <script src="js/admin-auth.js"></script>
+</body>
+</html>
+
