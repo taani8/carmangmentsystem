@@ -49,40 +49,13 @@
                 </div>
             </div>
 
-            <div class="recent-activity">
-                <h2>آخر الرحلات</h2>
-                <div class="activity-card">
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>النوع</th>
-                                    <th>الأجرة</th>
-                                    <th>العمولة</th>
-                                    <th>الخصم</th>
-                                    <th>التاريخ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="driverRecentTripsBody">
-                                <tr>
-                                    <td colspan="5" class="no-data">لا توجد رحلات</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <!-- السائق يرى فقط عدد الرحلات والرصيد حسب الطلب -->
         </div>
     </main>
 
-    <!-- Firebase Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-
-    <script src="js/config.js"></script>
-    <script src="js/driver-session.js"></script>
-    <script src="js/driver-dashboard.js"></script>
+    <!-- Supabase Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/driver-dashboard-supabase.js"></script>
 </body>
 </html>
