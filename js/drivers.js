@@ -264,6 +264,9 @@ async function saveDriver(e) {
     
     try {
         const supa = window.supabaseClient;
+        if (!supa) {
+            throw new Error('Supabase client غير مُهيأ. تحقق من الاتصال.');
+        }
         const driverData = {
             name: name,
             phone: phone,
@@ -290,7 +293,8 @@ async function saveDriver(e) {
         showSuccessMessage(editingDriverId ? 'تم تحديث السائق بنجاح' : 'تم إضافة السائق بنجاح');
     } catch (error) {
         console.error('Error saving driver:', error);
-        showErrorMessage('فشل في حفظ السائق');
+        const friendly = resolveSupabaseError(error);
+        showErrorMessage(friendly);
     } finally {
         saveBtn.textContent = originalText;
         saveBtn.disabled = false;
@@ -356,6 +360,35 @@ function showErrorMessage(message) {
 function showSuccessMessage(message) {
     // You can implement a toast notification system here
     alert(message);
+}
+
+function resolveSupabaseError(error) {
+    try {
+        const code = (error && (error.code || error.status)) || '';
+        const message = (error && (error.message || error.msg || error.error)) || '';
+        const details = (error && (error.details || error.hint)) || '';
+        const raw = [message, details].filter(Boolean).join(' - ');
+
+        // Duplicate unique key (e.g., phone)
+        if (code === '23505' || /duplicate key value/i.test(message)) {
+            return 'رقم الهاتف مسجل بالفعل. يرجى استخدام رقم مختلف.';
+        }
+        // RLS / permissions
+        if (/row-level security|RLS|permission denied|not allowed/i.test(raw)) {
+            return 'ليست لديك صلاحية لإضافة/تعديل السائق. الرجاء تسجيل الدخول كمشرف.';
+        }
+        // Validation
+        if (/invalid input|type mismatch|null value/i.test(raw)) {
+            return 'بيانات غير صالحة. تحقق من الحقول وأعد المحاولة.';
+        }
+        // Missing client
+        if (/Supabase client غير مُهيأ/i.test(message)) {
+            return message;
+        }
+        return 'فشل في حفظ السائق' + (raw ? `: ${raw}` : '');
+    } catch (_) {
+        return 'فشل في حفظ السائق';
+    }
 }
 
 function handlePhotoSelect(e) {

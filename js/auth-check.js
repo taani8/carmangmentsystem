@@ -9,12 +9,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return initializePage();
             }
             const { data } = await supa.auth.getSession();
-            // If you want to force login for admins, uncomment the redirect
-            // if (!data.session) { window.location.href = 'driver.html'; return; }
+            // Enforce admin login on protected pages that include this script
+            if (!data || !data.session) { window.location.href = 'admin-login.html'; return; }
             initializePage();
         } catch (e) {
             console.error('Auth state error:', e);
-            initializePage();
+            // Fallback to login if auth state cannot be determined
+            window.location.href = 'admin-login.html';
         }
     })();
 
