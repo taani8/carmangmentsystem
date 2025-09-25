@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drivers - Driver Management System</title>
+    <title>السائقين - نظام إدارة السائقين</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/drivers.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body dir="rtl">
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <h2>Driver Management</h2>
+                <img src="public/logo.jpg" alt="Ride On Time" class="nav-logo">
+                <h2>إدارة السائقين</h2>
             </div>
             <div class="nav-menu">
-                <a href="dashboard.html" class="nav-link">Dashboard</a>
-                <a href="drivers.html" class="nav-link active">Drivers</a>
-                <a href="trips.html" class="nav-link">Trips</a>
-                <a href="reports.html" class="nav-link">Reports</a>
-                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+                <a href="dashboard.html" class="nav-link">لوحة التحكم</a>
+                <a href="drivers.html" class="nav-link active">السائقين</a>
+                <a href="trips.html" class="nav-link">الرحلات</a>
+                <a href="reports.html" class="nav-link">التقارير</a>
+                <button id="logoutBtn" class="btn btn-outline">تسجيل الخروج</button>
             </div>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -31,40 +33,50 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>Driver Management</h1>
-                <button id="addDriverBtn" class="btn btn-primary">Add New Driver</button>
+                <h1>إدارة السائقين</h1>
+                <button id="addDriverBtn" class="btn btn-primary">إضافة سائق جديد</button>
             </div>
 
             <!-- Search and Filter -->
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="cards">عرض البطاقات</button>
+                <button class="view-btn" data-view="table">عرض الجدول</button>
+            </div>
+
             <div class="filters">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search drivers...">
+                    <input type="text" id="searchInput" placeholder="البحث عن السائقين...">
                 </div>
                 <div class="filter-options">
                     <select id="balanceFilter">
-                        <option value="all">All Drivers</option>
-                        <option value="positive">Positive Balance</option>
-                        <option value="zero">Zero Balance</option>
-                        <option value="negative">Negative Balance</option>
+                        <option value="all">جميع السائقين</option>
+                        <option value="positive">رصيد موجب</option>
+                        <option value="zero">رصيد صفر</option>
+                        <option value="negative">رصيد سالب</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Drivers Table -->
+            <!-- Drivers Cards View -->
+            <div id="driversCards" class="drivers-grid">
+                <div class="no-data">جاري تحميل السائقين...</div>
+            </div>
+
+            <!-- Drivers Table View -->
             <div class="table-container">
-                <table class="data-table">
+                <table id="driversTable" class="data-table" style="display: none;">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Balance</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>الاسم</th>
+                            <th>الهاتف</th>
+                            <th>الرصيد</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="driversTableBody">
                         <tr>
-                            <td colspan="5" class="no-data">Loading drivers...</td>
+                            <td colspan="5" class="no-data">جاري تحميل السائقين...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -76,37 +88,37 @@
     <div id="driverModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Add New Driver</h2>
+                <h2 id="modalTitle">إضافة سائق جديد</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <form id="driverForm" class="modal-form">
                 <div class="form-group">
-                    <label for="driverName">Driver Name *</label>
+                    <label for="driverName">اسم السائق *</label>
                     <input type="text" id="driverName" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="driverPhone">Phone Number *</label>
+                    <label for="driverPhone">رقم الهاتف *</label>
                     <input type="tel" id="driverPhone" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="driverPhoto">Driver Photo</label>
+                    <label for="driverPhoto">صورة السائق</label>
                     <input type="file" id="driverPhoto" accept="image/*">
                     <div id="photoPreview" class="photo-preview" style="display: none;">
-                        <img id="previewImage" src="" alt="Driver photo preview">
+                        <img id="previewImage" src="" alt="معاينة صورة السائق">
                         <button type="button" id="removePhoto" class="remove-photo-btn">&times;</button>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="driverBalance">Starting Balance (JOD) *</label>
+                    <label for="driverBalance">الرصيد الابتدائي (دينار) *</label>
                     <input type="number" id="driverBalance" step="0.01" min="0" required>
                 </div>
                 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="saveDriverBtn">Save Driver</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" id="saveDriverBtn">حفظ السائق</button>
                 </div>
             </form>
         </div>
@@ -116,16 +128,16 @@
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Delete Driver</h2>
+                <h2>حذف السائق</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this driver? This action cannot be undone.</p>
+                <p>هل أنت متأكد من حذف هذا السائق؟ لا يمكن التراجع عن هذا الإجراء.</p>
                 <p><strong id="deleteDriverName"></strong></p>
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
             </div>
         </div>
     </div>

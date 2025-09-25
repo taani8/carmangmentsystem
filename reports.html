@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports - Driver Management System</title>
+    <title>التقارير - نظام إدارة السائقين</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/reports.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body dir="rtl">
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <h2>Driver Management</h2>
+                <img src="public/logo.jpg" alt="Ride On Time" class="nav-logo">
+                <h2>إدارة السائقين</h2>
             </div>
             <div class="nav-menu">
-                <a href="dashboard.html" class="nav-link">Dashboard</a>
-                <a href="drivers.html" class="nav-link">Drivers</a>
-                <a href="trips.html" class="nav-link">Trips</a>
-                <a href="reports.html" class="nav-link active">Reports</a>
-                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+                <a href="dashboard.html" class="nav-link">لوحة التحكم</a>
+                <a href="drivers.html" class="nav-link">السائقين</a>
+                <a href="trips.html" class="nav-link">الرحلات</a>
+                <a href="reports.html" class="nav-link active">التقارير</a>
+                <button id="logoutBtn" class="btn btn-outline">تسجيل الخروج</button>
             </div>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -31,27 +33,27 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>Reports & Analytics</h1>
-                <button id="exportBtn" class="btn btn-secondary">Export to CSV</button>
+                <h1>التقارير والتحليلات</h1>
+                <button id="exportBtn" class="btn btn-secondary">تصدير إلى CSV</button>
             </div>
 
             <!-- Report Filters -->
             <div class="report-filters">
                 <div class="filter-card">
-                    <h3>Date Range</h3>
+                    <h3>نطاق التاريخ</h3>
                     <div class="date-inputs">
                         <input type="date" id="startDate">
                         <input type="date" id="endDate">
-                        <button id="applyFiltersBtn" class="btn btn-primary">Apply</button>
+                        <button id="applyFiltersBtn" class="btn btn-primary">تطبيق</button>
                     </div>
                 </div>
                 
                 <div class="filter-card">
-                    <h3>Quick Filters</h3>
+                    <h3>فلاتر سريعة</h3>
                     <div class="quick-filters">
-                        <button class="filter-btn active" data-period="today">Today</button>
-                        <button class="filter-btn" data-period="week">This Week</button>
-                        <button class="filter-btn" data-period="month">This Month</button>
+                        <button class="filter-btn active" data-period="today">اليوم</button>
+                        <button class="filter-btn" data-period="week">هذا الأسبوع</button>
+                        <button class="filter-btn" data-period="month">هذا الشهر</button>
                     </div>
                 </div>
             </div>
@@ -59,55 +61,55 @@
             <!-- Summary Cards -->
             <div class="summary-grid">
                 <div class="summary-card">
-                    <h3>Total Commission</h3>
-                    <div class="summary-value" id="totalCommission">0 JOD</div>
+                    <h3>إجمالي العمولة</h3>
+                    <div class="summary-value" id="totalCommission">٠ دينار</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Total Trips</h3>
-                    <div class="summary-value" id="totalTrips">0</div>
+                    <h3>إجمالي الرحلات</h3>
+                    <div class="summary-value" id="totalTrips">٠</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Average Commission</h3>
-                    <div class="summary-value" id="avgCommission">0 JOD</div>
+                    <h3>متوسط العمولة</h3>
+                    <div class="summary-value" id="avgCommission">٠ دينار</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Active Drivers</h3>
-                    <div class="summary-value" id="activeDrivers">0</div>
+                    <h3>السائقين النشطين</h3>
+                    <div class="summary-value" id="activeDrivers">٠</div>
                 </div>
             </div>
 
             <!-- Trip Type Analysis -->
             <div class="analysis-section">
-                <h2>Trip Type Analysis</h2>
+                <h2>تحليل أنواع الرحلات</h2>
                 <div class="chart-container">
                     <div id="tripTypeChart" class="chart">
                         <div class="chart-item">
-                            <div class="chart-label">Airport</div>
+                            <div class="chart-label">المطار</div>
                             <div class="chart-bar">
                                 <div class="chart-fill" data-type="Airport" style="width: 0%;"></div>
                             </div>
-                            <div class="chart-value" id="airportCount">0</div>
+                            <div class="chart-value" id="airportCount">٠</div>
                         </div>
                         <div class="chart-item">
-                            <div class="chart-label">Families</div>
+                            <div class="chart-label">العائلات</div>
                             <div class="chart-bar">
                                 <div class="chart-fill" data-type="Families" style="width: 0%;"></div>
                             </div>
-                            <div class="chart-value" id="familiesCount">0</div>
+                            <div class="chart-value" id="familiesCount">٠</div>
                         </div>
                         <div class="chart-item">
-                            <div class="chart-label">Passengers</div>
+                            <div class="chart-label">الركاب</div>
                             <div class="chart-bar">
                                 <div class="chart-fill" data-type="Passengers" style="width: 0%;"></div>
                             </div>
-                            <div class="chart-value" id="passengersCount">0</div>
+                            <div class="chart-value" id="passengersCount">٠</div>
                         </div>
                         <div class="chart-item">
-                            <div class="chart-label">Drive</div>
+                            <div class="chart-label">توصيل سريع</div>
                             <div class="chart-bar">
                                 <div class="chart-fill" data-type="Drive" style="width: 0%;"></div>
                             </div>
-                            <div class="chart-value" id="driveCount">0</div>
+                            <div class="chart-value" id="driveCount">٠</div>
                         </div>
                     </div>
                 </div>
@@ -115,22 +117,22 @@
 
             <!-- Top Drivers -->
             <div class="top-drivers-section">
-                <h2>Most Active Drivers</h2>
+                <h2>أكثر السائقين نشاطاً</h2>
                 <div class="drivers-ranking">
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Rank</th>
-                                    <th>Driver</th>
-                                    <th>Trips</th>
-                                    <th>Commission Generated</th>
-                                    <th>Balance</th>
+                                    <th>الترتيب</th>
+                                    <th>السائق</th>
+                                    <th>الرحلات</th>
+                                    <th>العمولة المحققة</th>
+                                    <th>الرصيد</th>
                                 </tr>
                             </thead>
                             <tbody id="topDriversBody">
                                 <tr>
-                                    <td colspan="5" class="no-data">Loading driver statistics...</td>
+                                    <td colspan="5" class="no-data">جاري تحميل إحصائيات السائقين...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -140,9 +142,9 @@
 
             <!-- Low Balance Alert -->
             <div class="alert-section">
-                <h2>Balance Alerts</h2>
+                <h2>تنبيهات الرصيد</h2>
                 <div id="lowBalanceAlert" class="alert-container">
-                    <div class="no-alerts">No drivers with low balance</div>
+                    <div class="no-alerts">لا يوجد سائقين برصيد منخفض</div>
                 </div>
             </div>
         </div>

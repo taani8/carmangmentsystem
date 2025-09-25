@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trips - Driver Management System</title>
+    <title>الرحلات - نظام إدارة السائقين</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/trips.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body dir="rtl">
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <h2>Driver Management</h2>
+                <img src="public/logo.jpg" alt="Ride On Time" class="nav-logo">
+                <h2>إدارة السائقين</h2>
             </div>
             <div class="nav-menu">
-                <a href="dashboard.html" class="nav-link">Dashboard</a>
-                <a href="drivers.html" class="nav-link">Drivers</a>
-                <a href="trips.html" class="nav-link active">Trips</a>
-                <a href="reports.html" class="nav-link">Reports</a>
-                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+                <a href="dashboard.html" class="nav-link">لوحة التحكم</a>
+                <a href="drivers.html" class="nav-link">السائقين</a>
+                <a href="trips.html" class="nav-link active">الرحلات</a>
+                <a href="reports.html" class="nav-link">التقارير</a>
+                <button id="logoutBtn" class="btn btn-outline">تسجيل الخروج</button>
             </div>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -31,25 +33,25 @@
     <main class="main-content">
         <div class="container">
             <div class="page-header">
-                <h1>Trip Management</h1>
-                <button id="addTripBtn" class="btn btn-primary">Add New Trip</button>
+                <h1>إدارة الرحلات</h1>
+                <button id="addTripBtn" class="btn btn-primary">إضافة رحلة جديدة</button>
             </div>
 
             <!-- Search and Filter -->
             <div class="filters">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Search trips...">
+                    <input type="text" id="searchInput" placeholder="البحث في الرحلات...">
                 </div>
                 <div class="filter-options">
                     <select id="driverFilter">
-                        <option value="all">All Drivers</option>
+                        <option value="all">جميع السائقين</option>
                     </select>
                     <select id="typeFilter">
-                        <option value="all">All Types</option>
-                        <option value="Airport">Airport</option>
-                        <option value="Families">Families</option>
-                        <option value="Passengers">Passengers</option>
-                        <option value="Drive">Drive (Express)</option>
+                        <option value="all">جميع الأنواع</option>
+                        <option value="Airport">المطار</option>
+                        <option value="Families">العائلات</option>
+                        <option value="Passengers">الركاب</option>
+                        <option value="Drive">توصيل سريع</option>
                     </select>
                     <input type="date" id="dateFilter">
                 </div>
@@ -60,18 +62,18 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Date & Time</th>
-                            <th>Driver</th>
-                            <th>Type</th>
-                            <th>Fare</th>
-                            <th>Commission</th>
-                            <th>Deduction</th>
-                            <th>Actions</th>
+                            <th>التاريخ والوقت</th>
+                            <th>السائق</th>
+                            <th>النوع</th>
+                            <th>الأجرة</th>
+                            <th>العمولة</th>
+                            <th>الخصم</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="tripsTableBody">
                         <tr>
-                            <td colspan="7" class="no-data">Loading trips...</td>
+                            <td colspan="7" class="no-data">جاري تحميل الرحلات...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -83,46 +85,46 @@
     <div id="tripModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Add New Trip</h2>
+                <h2 id="modalTitle">إضافة رحلة جديدة</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <form id="tripForm" class="modal-form">
                 <div class="form-group">
-                    <label for="tripDriver">Driver *</label>
+                    <label for="tripDriver">السائق *</label>
                     <select id="tripDriver" required>
-                        <option value="">Select Driver</option>
+                        <option value="">اختر السائق</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="tripType">Trip Type *</label>
+                    <label for="tripType">نوع الرحلة *</label>
                     <select id="tripType" required>
-                        <option value="">Select Type</option>
-                        <option value="Airport">Airport</option>
-                        <option value="Families">Families</option>
-                        <option value="Passengers">Passengers</option>
-                        <option value="Drive">Drive (Express)</option>
+                        <option value="">اختر النوع</option>
+                        <option value="Airport">المطار</option>
+                        <option value="Families">العائلات</option>
+                        <option value="Passengers">الركاب</option>
+                        <option value="Drive">توصيل سريع</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="tripFare">Fare Amount (JOD) *</label>
+                    <label for="tripFare">مبلغ الأجرة (دينار) *</label>
                     <input type="number" id="tripFare" step="0.01" min="0" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="tripCommission">Commission (JOD) *</label>
+                    <label for="tripCommission">العمولة (دينار) *</label>
                     <input type="number" id="tripCommission" step="0.01" min="0" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="tripDeduction">Deduction from Balance (JOD) *</label>
+                    <label for="tripDeduction">الخصم من الرصيد (دينار) *</label>
                     <input type="number" id="tripDeduction" step="0.01" min="0" required>
                 </div>
                 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="saveTripBtn">Save Trip</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" id="saveTripBtn">حفظ الرحلة</button>
                 </div>
             </form>
         </div>
@@ -132,15 +134,15 @@
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Delete Trip</h2>
+                <h2>حذف الرحلة</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this trip? This action cannot be undone and will affect the driver's balance.</p>
+                <p>هل أنت متأكد من حذف هذه الرحلة؟ لا يمكن التراجع عن هذا الإجراء وسيؤثر على رصيد السائق.</p>
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">حذف</button>
             </div>
         </div>
     </div>

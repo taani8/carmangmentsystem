@@ -64,13 +64,13 @@ function updateDriverDropdowns() {
     const driverFilterSelect = document.getElementById('driverFilter');
     
     // Update trip form driver dropdown
-    tripDriverSelect.innerHTML = '<option value="">Select Driver</option>';
+    tripDriverSelect.innerHTML = '<option value="">اختر السائق</option>';
     drivers.forEach(driver => {
         tripDriverSelect.innerHTML += `<option value="${driver.id}">${driver.name}</option>`;
     });
     
     // Update driver filter dropdown
-    driverFilterSelect.innerHTML = '<option value="all">All Drivers</option>';
+    driverFilterSelect.innerHTML = '<option value="all">جميع السائقين</option>';
     drivers.forEach(driver => {
         driverFilterSelect.innerHTML += `<option value="${driver.id}">${driver.name}</option>`;
     });
@@ -127,7 +127,7 @@ function updateTripsTable() {
     const tbody = document.getElementById('tripsTableBody');
     
     if (filteredTrips.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="no-data">No trips found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data">لا توجد رحلات</td></tr>';
         return;
     }
     
@@ -140,19 +140,29 @@ function updateTripsTable() {
                     <div>${formatDateTime(tripDate)}</div>
                 </td>
                 <td><strong>${trip.driverName || 'Unknown Driver'}</strong></td>
-                <td><span class="trip-type trip-type-${trip.tripType.toLowerCase()}">${trip.tripType}</span></td>
-                <td class="amount amount-positive">${(trip.fare || 0).toFixed(2)} JOD</td>
-                <td class="amount amount-commission">${(trip.commission || 0).toFixed(2)} JOD</td>
-                <td class="amount amount-deduction">${(trip.deduction || 0).toFixed(2)} JOD</td>
+                <td><span class="trip-type trip-type-${trip.tripType.toLowerCase()}">${getArabicTripType(trip.tripType)}</span></td>
+                <td class="amount amount-positive">${(trip.fare || 0).toFixed(2)} دينار</td>
+                <td class="amount amount-commission">${(trip.commission || 0).toFixed(2)} دينار</td>
+                <td class="amount amount-deduction">${(trip.deduction || 0).toFixed(2)} دينار</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn btn-secondary action-btn" onclick="editTrip('${trip.id}')">Edit</button>
-                        <button class="btn btn-danger action-btn" onclick="confirmDeleteTrip('${trip.id}')">Delete</button>
+                        <button class="btn btn-secondary action-btn" onclick="editTrip('${trip.id}')">تعديل</button>
+                        <button class="btn btn-danger action-btn" onclick="confirmDeleteTrip('${trip.id}')">حذف</button>
                     </div>
                 </td>
             </tr>
         `;
     }).join('');
+}
+
+function getArabicTripType(type) {
+    const types = {
+        'Airport': 'المطار',
+        'Families': 'العائلات',
+        'Passengers': 'الركاب',
+        'Drive': 'توصيل سريع'
+    };
+    return types[type] || type;
 }
 
 function formatDateTime(date) {
@@ -171,7 +181,7 @@ function formatDateTime(date) {
 
 function openAddTripModal() {
     editingTripId = null;
-    document.getElementById('modalTitle').textContent = 'Add New Trip';
+    document.getElementById('modalTitle').textContent = 'إضافة رحلة جديدة';
     document.getElementById('tripForm').reset();
     document.getElementById('tripModal').classList.add('show');
 }
@@ -181,7 +191,7 @@ function editTrip(tripId) {
     if (!trip) return;
     
     editingTripId = tripId;
-    document.getElementById('modalTitle').textContent = 'Edit Trip';
+    document.getElementById('modalTitle').textContent = 'تعديل الرحلة';
     document.getElementById('tripDriver').value = trip.driverId;
     document.getElementById('tripType').value = trip.tripType;
     document.getElementById('tripFare').value = trip.fare || 0;
@@ -201,19 +211,19 @@ async function saveTrip(e) {
     const deduction = parseFloat(document.getElementById('tripDeduction').value) || 0;
     
     if (!driverId || !tripType) {
-        showErrorMessage('Please fill in all required fields');
+        showErrorMessage('يرجى ملء جميع الحقول المطلوبة');
         return;
     }
     
     const driver = drivers.find(d => d.id === driverId);
     if (!driver) {
-        showErrorMessage('Selected driver not found');
+        showErrorMessage('السائق المحدد غير موجود');
         return;
     }
     
     const saveBtn = document.getElementById('saveTripBtn');
     const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Saving...';
+    saveBtn.textContent = 'جاري الحفظ...';
     saveBtn.disabled = true;
     
     try {
@@ -254,10 +264,10 @@ async function saveTrip(e) {
         
         closeModals();
         loadTrips();
-        showSuccessMessage(editingTripId ? 'Trip updated successfully' : 'Trip added successfully');
+        showSuccessMessage(editingTripId ? 'تم تحديث الرحلة بنجاح' : 'تم إضافة الرحلة بنجاح');
     } catch (error) {
         console.error('Error saving trip:', error);
-        showErrorMessage('Failed to save trip');
+        showErrorMessage('فشل في حفظ الرحلة');
     } finally {
         saveBtn.textContent = originalText;
         saveBtn.disabled = false;
@@ -274,7 +284,7 @@ async function deleteTrip() {
     
     const deleteBtn = document.getElementById('confirmDeleteBtn');
     const originalText = deleteBtn.textContent;
-    deleteBtn.textContent = 'Deleting...';
+    deleteBtn.textContent = 'جاري الحذف...';
     deleteBtn.disabled = true;
     
     try {
@@ -291,10 +301,10 @@ async function deleteTrip() {
         
         closeModals();
         loadTrips();
-        showSuccessMessage('Trip deleted successfully');
+        showSuccessMessage('تم حذف الرحلة بنجاح');
     } catch (error) {
         console.error('Error deleting trip:', error);
-        showErrorMessage('Failed to delete trip');
+        showErrorMessage('فشل في حذف الرحلة');
     } finally {
         deleteBtn.textContent = originalText;
         deleteBtn.disabled = false;

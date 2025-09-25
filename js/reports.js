@@ -132,14 +132,14 @@ function updateSummaryCards() {
     
     // Total commission
     const totalCommission = filteredTrips.reduce((sum, trip) => sum + (trip.commission || 0), 0);
-    document.getElementById('totalCommission').textContent = `${totalCommission.toFixed(2)} JOD`;
+    document.getElementById('totalCommission').textContent = `${totalCommission.toFixed(2)} دينار`;
     
     // Total trips
     document.getElementById('totalTrips').textContent = filteredTrips.length;
     
     // Average commission
     const avgCommission = filteredTrips.length > 0 ? totalCommission / filteredTrips.length : 0;
-    document.getElementById('avgCommission').textContent = `${avgCommission.toFixed(2)} JOD`;
+    document.getElementById('avgCommission').textContent = `${avgCommission.toFixed(2)} دينار`;
     
     // Active drivers (drivers with trips in the period)
     const activeDriverIds = [...new Set(filteredTrips.map(trip => trip.driverId))];
@@ -214,7 +214,7 @@ function updateTopDriversTable() {
     const tbody = document.getElementById('topDriversBody');
     
     if (sortedDrivers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="no-data">No driver data for selected period</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="no-data">لا توجد بيانات سائقين للفترة المحددة</td></tr>';
         return;
     }
     
@@ -228,8 +228,8 @@ function updateTopDriversTable() {
                 <td><span class="rank-badge ${rankClass}">${rank}</span></td>
                 <td><strong>${stats.driverName}</strong></td>
                 <td>${stats.tripCount}</td>
-                <td class="amount amount-commission">${stats.totalCommission.toFixed(2)} JOD</td>
-                <td class="amount ${balanceClass}">${stats.balance.toFixed(2)} JOD</td>
+                <td class="amount amount-commission">${stats.totalCommission.toFixed(2)} دينار</td>
+                <td class="amount ${balanceClass}">${stats.balance.toFixed(2)} دينار</td>
             </tr>
         `;
     }).join('');
@@ -242,7 +242,7 @@ function updateLowBalanceAlerts() {
     const lowBalanceDrivers = drivers.filter(driver => (driver.balance || 0) <= 0);
     
     if (lowBalanceDrivers.length === 0) {
-        alertContainer.innerHTML = '<div class="no-alerts">No drivers with low balance</div>';
+        alertContainer.innerHTML = '<div class="no-alerts">لا يوجد سائقين برصيد منخفض</div>';
         return;
     }
     
@@ -253,8 +253,9 @@ function updateLowBalanceAlerts() {
                 <div class="alert-info">
                     <div class="driver-name">${driver.name}</div>
                     <div class="balance-info">Phone: ${driver.phone}</div>
+                    <div class="balance-info">الهاتف: ${driver.phone}</div>
                 </div>
-                <div class="alert-balance">${balance.toFixed(2)} JOD</div>
+                <div class="alert-balance">${balance.toFixed(2)} دينار</div>
             </div>
         `;
     }).join('');
@@ -264,13 +265,13 @@ function exportToCSV() {
     const { filteredTrips } = reportsData;
     
     if (filteredTrips.length === 0) {
-        alert('No data to export');
+        alert('لا توجد بيانات للتصدير');
         return;
     }
     
     // Prepare CSV data
     const csvData = [];
-    csvData.push(['Date', 'Time', 'Driver', 'Trip Type', 'Fare (JOD)', 'Commission (JOD)', 'Deduction (JOD)']);
+    csvData.push(['التاريخ', 'الوقت', 'السائق', 'نوع الرحلة', 'الأجرة (دينار)', 'العمولة (دينار)', 'الخصم (دينار)']);
     
     filteredTrips.forEach(trip => {
         const tripDate = trip.date.toDate ? trip.date.toDate() : new Date(trip.date);

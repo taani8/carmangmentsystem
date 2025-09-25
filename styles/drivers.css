@@ -1,4 +1,38 @@
 /* Driver Management Styles */
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.view-btn {
+    padding: 0.75rem 1.25rem;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    color: #666666;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.view-btn.active {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+.view-btn:hover {
+    border-color: #000000;
+    color: #000000;
+}
+
+.view-btn.active:hover {
+    background: #333333;
+    color: #ffffff;
+}
+
 .drivers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -28,8 +62,32 @@
 .driver-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 1.5rem;
+}
+
+.driver-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f0f0f0;
+    flex-shrink: 0;
+}
+
+.driver-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666666;
+    font-size: 24px;
+    font-weight: 600;
+    border: 3px solid #f0f0f0;
+    flex-shrink: 0;
 }
 
 .driver-info h3 {
@@ -47,8 +105,31 @@
     font-weight: 500;
 }
 
-.balance-display {
-    text-align: right;
+.driver-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #fafafa;
+    border-radius: 12px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666666;
+    font-weight: 500;
 }
 
 .balance-amount {

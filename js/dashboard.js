@@ -67,7 +67,7 @@ function updateStatistics() {
     
     // Today's commission
     const todayCommission = todayTrips.reduce((sum, trip) => sum + (trip.commission || 0), 0);
-    document.getElementById('todayCommission').textContent = `${todayCommission.toFixed(2)} JOD`;
+    document.getElementById('todayCommission').textContent = `${todayCommission.toFixed(2)} دينار`;
     
     // Low balance drivers
     const lowBalanceDrivers = drivers.filter(driver => (driver.balance || 0) <= 0);
@@ -93,12 +93,22 @@ function updateRecentTripsTable() {
     tbody.innerHTML = dashboardData.todayTrips.map(trip => `
         <tr>
             <td>${trip.driverName || 'Unknown Driver'}</td>
-            <td><span class="trip-type trip-type-${trip.tripType.toLowerCase()}">${trip.tripType}</span></td>
-            <td class="amount amount-positive">${(trip.fare || 0).toFixed(2)} JOD</td>
-            <td class="amount amount-commission">${(trip.commission || 0).toFixed(2)} JOD</td>
+            <td><span class="trip-type trip-type-${trip.tripType.toLowerCase()}">${getArabicTripType(trip.tripType)}</span></td>
+            <td class="amount amount-positive">${(trip.fare || 0).toFixed(2)} دينار</td>
+            <td class="amount amount-commission">${(trip.commission || 0).toFixed(2)} دينار</td>
             <td>${formatTime(trip.date)}</td>
         </tr>
     `).join('');
+}
+
+function getArabicTripType(type) {
+    const types = {
+        'Airport': 'المطار',
+        'Families': 'العائلات',
+        'Passengers': 'الركاب',
+        'Drive': 'توصيل سريع'
+    };
+    return types[type] || type;
 }
 
 function formatTime(date) {

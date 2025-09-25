@@ -3,6 +3,7 @@ let drivers = [];
 let filteredDrivers = [];
 let editingDriverId = null;
 let selectedPhotoFile = null;
+let currentView = 'cards';
 
 function initializePage() {
     loadDrivers();
@@ -18,6 +19,17 @@ function setupEventListeners() {
     
     // Balance filter
     document.getElementById('balanceFilter').addEventListener('change', filterDrivers);
+    
+    // View toggle
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            currentView = this.getAttribute('data-view');
+            updateDriversDisplay();
+        });
+    });
     
     // Modal close buttons
     document.querySelectorAll('.close-btn').forEach(btn => {
@@ -57,7 +69,7 @@ async function loadDrivers() {
         }));
         
         filteredDrivers = [...drivers];
-        updateDriversTable();
+        updateDriversDisplay();
     } catch (error) {
         console.error('Error loading drivers:', error);
         showErrorMessage('Failed to load drivers');
@@ -93,21 +105,81 @@ function filterDrivers() {
         return matchesSearch && matchesBalance;
     });
     
-    updateDriversTable();
+    updateDriversDisplay();
+}
+
+function updateDriversDisplay() {
+    if (currentView === 'cards') {
+        updateDriversCards();
+        document.getElementById('driversCards').style.display = 'grid';
+        document.getElementById('driversTable').style.display = 'none';
+    } else {
+        updateDriversTable();
+        document.getElementById('driversCards').style.display = 'none';
+        document.getElementById('driversTable').style.display = 'table';
+    }
+}
+
+function updateDriversCards() {
+    const container = document.getElementById('driversCards');
+    
+    if (filteredDrivers.length === 0) {
+        container.innerHTML = '<div class="no-data">لا يوجد سائقين</div>';
+        return;
+    }
+    
+    container.innerHTML = filteredDrivers.map(driver => {
+        const balance = driver.balance || 0;
+        const balanceClass = balance > 0 ? 'balance-positive' : balance === 0 ? 'balance-warning' : 'balance-danger';
+        const statusText = balance > 0 ? 'نشط' : balance === 0 ? 'رصيد صفر' : 'رصيد سالب';
+        const cardClass = balance <= 0 ? 'driver-card low-balance' : 'driver-card';
+        
+        const avatarHtml = driver.photoURL ? 
+            `<img src="${driver.photoURL}" alt="${driver.name}" class="driver-avatar">` :
+            `<div class="driver-avatar-placeholder">${driver.name.charAt(0).toUpperCase()}</div>`;
+        
+        return `
+            <div class="${cardClass}">
+                <div class="driver-header">
+                    ${avatarHtml}
+                    <div class="driver-info">
+                        <h3>${driver.name}</h3>
+                        <p>${driver.phone}</p>
+                    </div>
+                </div>
+                
+                <div class="driver-stats">
+                    <div class="stat-item">
+                        <div class="stat-value ${balanceClass}">${balance.toFixed(2)}</div>
+                        <div class="stat-label">الرصيد (دينار)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${statusText}</div>
+                        <div class="stat-label">الحالة</div>
+                    </div>
+                </div>
+                
+                <div class="driver-actions">
+                    <button class="btn btn-secondary" onclick="editDriver('${driver.id}')">تعديل</button>
+                    <button class="btn btn-danger" onclick="confirmDeleteDriver('${driver.id}', '${driver.name}')">حذف</button>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 function updateDriversTable() {
     const tbody = document.getElementById('driversTableBody');
     
     if (filteredDrivers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="no-data">No drivers found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="no-data">لا يوجد سائقين</td></tr>';
         return;
     }
     
     tbody.innerHTML = filteredDrivers.map(driver => {
         const balance = driver.balance || 0;
         const balanceClass = balance > 0 ? 'status-positive' : balance === 0 ? 'status-warning' : 'status-danger';
-        const statusText = balance > 0 ? 'Active' : balance === 0 ? 'Zero Balance' : 'Negative Balance';
+        const statusText = balance > 0 ? 'نشط' : balance === 0 ? 'رصيد صفر' : 'رصيد سالب';
         
         const photoHtml = driver.photoURL ? 
             `<img src="${driver.photoURL}" alt="${driver.name}" class="driver-photo">` :
@@ -122,12 +194,12 @@ function updateDriversTable() {
                     </div>
                 </td>
                 <td>${driver.phone}</td>
-                <td class="amount ${balance > 0 ? 'amount-positive' : 'amount-deduction'}">${balance.toFixed(2)} JOD</td>
+                <td class="amount ${balance > 0 ? 'amount-positive' : 'amount-deduction'}">${balance.toFixed(2)} دينار</td>
                 <td><span class="status-badge ${balanceClass}">${statusText}</span></td>
                 <td>
                     <div class="action-buttons">
-                        <button class="btn btn-secondary action-btn" onclick="editDriver('${driver.id}')">Edit</button>
-                        <button class="btn btn-danger action-btn" onclick="confirmDeleteDriver('${driver.id}', '${driver.name}')">Delete</button>
+                        <button class="btn btn-secondary action-btn" onclick="editDriver('${driver.id}')">تعديل</button>
+                        <button class="btn btn-danger action-btn" onclick="confirmDeleteDriver('${driver.id}', '${driver.name}')">حذف</button>
                     </div>
                 </td>
             </tr>
@@ -138,7 +210,7 @@ function updateDriversTable() {
 function openAddDriverModal() {
     editingDriverId = null;
     selectedPhotoFile = null;
-    document.getElementById('modalTitle').textContent = 'Add New Driver';
+    document.getElementById('modalTitle').textContent = 'إضافة سائق جديد';
     document.getElementById('driverForm').reset();
     document.getElementById('photoPreview').style.display = 'none';
     document.getElementById('driverModal').classList.add('show');
@@ -149,7 +221,7 @@ function editDriver(driverId) {
     if (!driver) return;
     
     editingDriverId = driverId;
-    document.getElementById('modalTitle').textContent = 'Edit Driver';
+    document.getElementById('modalTitle').textContent = 'تعديل السائق';
     document.getElementById('driverName').value = driver.name;
     document.getElementById('driverPhone').value = driver.phone;
     document.getElementById('driverBalance').value = driver.balance || 0;
@@ -174,13 +246,13 @@ async function saveDriver(e) {
     const balance = parseFloat(document.getElementById('driverBalance').value) || 0;
     
     if (!name || !phone) {
-        showErrorMessage('Please fill in all required fields');
+        showErrorMessage('يرجى ملء جميع الحقول المطلوبة');
         return;
     }
     
     const saveBtn = document.getElementById('saveDriverBtn');
     const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'Saving...';
+    saveBtn.textContent = 'جاري الحفظ...';
     saveBtn.disabled = true;
     
     try {
@@ -222,10 +294,11 @@ async function saveDriver(e) {
         
         closeModals();
         loadDrivers();
-        showSuccessMessage(editingDriverId ? 'Driver updated successfully' : 'Driver added successfully');
+        updateDriversDisplay();
+        showSuccessMessage(editingDriverId ? 'تم تحديث السائق بنجاح' : 'تم إضافة السائق بنجاح');
     } catch (error) {
         console.error('Error saving driver:', error);
-        showErrorMessage('Failed to save driver');
+        showErrorMessage('فشل في حفظ السائق');
     } finally {
         saveBtn.textContent = originalText;
         saveBtn.disabled = false;
@@ -243,7 +316,7 @@ async function deleteDriver() {
     
     const deleteBtn = document.getElementById('confirmDeleteBtn');
     const originalText = deleteBtn.textContent;
-    deleteBtn.textContent = 'Deleting...';
+    deleteBtn.textContent = 'جاري الحذف...';
     deleteBtn.disabled = true;
     
     try {
@@ -254,7 +327,7 @@ async function deleteDriver() {
             .get();
         
         if (!tripsSnapshot.empty) {
-            showErrorMessage('Cannot delete driver with existing trips');
+            showErrorMessage('لا يمكن حذف سائق لديه رحلات موجودة');
             return;
         }
         
@@ -262,10 +335,11 @@ async function deleteDriver() {
         
         closeModals();
         loadDrivers();
-        showSuccessMessage('Driver deleted successfully');
+        updateDriversDisplay();
+        showSuccessMessage('تم حذف السائق بنجاح');
     } catch (error) {
         console.error('Error deleting driver:', error);
-        showErrorMessage('Failed to delete driver');
+        showErrorMessage('فشل في حذف السائق');
     } finally {
         deleteBtn.textContent = originalText;
         deleteBtn.disabled = false;
@@ -297,13 +371,13 @@ function handlePhotoSelect(e) {
     
     // Validate file type
     if (!file.type.startsWith('image/')) {
-        showErrorMessage('Please select a valid image file');
+        showErrorMessage('يرجى اختيار ملف صورة صالح');
         return;
     }
     
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-        showErrorMessage('Image size must be less than 5MB');
+        showErrorMessage('يجب أن يكون حجم الصورة أقل من 5 ميجابايت');
         return;
     }
     
