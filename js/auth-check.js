@@ -1,24 +1,30 @@
-// Authentication check for protected pages
+// Authentication check for protected pages (Supabase)
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication state
-    auth.onAuthStateChanged(user => {
-        if (!user) {
-            // User is not logged in, redirect to login
-            window.location.href = 'index.html';
-            return;
+    const supa = window.supabaseClient;
+    
+    (async function initAuth() {
+        try {
+            if (!supa) {
+                console.warn('Supabase client not found; continuing without auth gate');
+                return initializePage();
+            }
+            const { data } = await supa.auth.getSession();
+            // If you want to force login for admins, uncomment the redirect
+            // if (!data.session) { window.location.href = 'driver.html'; return; }
+            initializePage();
+        } catch (e) {
+            console.error('Auth state error:', e);
+            initializePage();
         }
-        
-        // User is logged in, initialize page functionality
-        initializePage();
-    });
+    })();
 
     // Logout functionality
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async function() {
             try {
-                await auth.signOut();
-                window.location.href = 'index.html';
+                if (supa) await supa.auth.signOut();
+                window.location.href = 'driver.html';
             } catch (error) {
                 console.error('Logout error:', error);
             }
@@ -38,6 +44,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize page-specific functionality
 function initializePage() {
-    // This function will be overridden in each page's specific JS file
     console.log('Page initialized');
 }
