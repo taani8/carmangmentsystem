@@ -6,19 +6,26 @@ let selectedPhotoFile = null;
 let currentView = 'cards';
 
 function initializePage() {
+    // Run only on pages that contain drivers UI
+    if (!document.getElementById('driversCards') && !document.getElementById('driversTableBody')) {
+        return;
+    }
     loadDrivers();
     setupEventListeners();
 }
 
 function setupEventListeners() {
     // Add driver button
-    document.getElementById('addDriverBtn').addEventListener('click', openAddDriverModal);
+    const addDriverBtn = document.getElementById('addDriverBtn');
+    if (addDriverBtn) addDriverBtn.addEventListener('click', openAddDriverModal);
     
     // Search input
-    document.getElementById('searchInput').addEventListener('input', filterDrivers);
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.addEventListener('input', filterDrivers);
     
     // Balance filter
-    document.getElementById('balanceFilter').addEventListener('change', filterDrivers);
+    const balanceFilter = document.getElementById('balanceFilter');
+    if (balanceFilter) balanceFilter.addEventListener('change', filterDrivers);
     
     // View toggle
     document.querySelectorAll('.view-btn').forEach(btn => {
@@ -37,18 +44,24 @@ function setupEventListeners() {
     });
     
     // Cancel buttons
-    document.getElementById('cancelBtn').addEventListener('click', closeModals);
-    document.getElementById('cancelDeleteBtn').addEventListener('click', closeModals);
+    const cancelBtn = document.getElementById('cancelBtn');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModals);
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeModals);
     
     // Form submit
-    document.getElementById('driverForm').addEventListener('submit', saveDriver);
+    const driverForm = document.getElementById('driverForm');
+    if (driverForm) driverForm.addEventListener('submit', saveDriver);
     
     // Delete confirmation
-    document.getElementById('confirmDeleteBtn').addEventListener('click', deleteDriver);
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', deleteDriver);
     
     // Photo upload handling
-    document.getElementById('driverPhoto').addEventListener('change', handlePhotoSelect);
-    document.getElementById('removePhoto').addEventListener('click', removePhoto);
+    const driverPhoto = document.getElementById('driverPhoto');
+    if (driverPhoto) driverPhoto.addEventListener('change', handlePhotoSelect);
+    const removePhotoBtn = document.getElementById('removePhoto');
+    if (removePhotoBtn) removePhotoBtn.addEventListener('click', removePhoto);
     
     // Close modal when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
