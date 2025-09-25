@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة السائق</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body dir="rtl">
+    <main class="auth-container">
+        <div class="auth-card" style="max-width: 480px;">
+            <div class="auth-header">
+                <img src="public/logo.jpg" alt="Ride On Time" class="auth-logo">
+                <h1>بوابة السائق</h1>
+                <p class="auth-subtitle">ادخل رقم هاتفك لمعرفة عدد الرحلات ورصيدك</p>
+            </div>
+
+            <form id="driverOtpForm" class="auth-form">
+                <div class="form-group">
+                    <label for="otpPhone">رقم الهاتف</label>
+                    <input type="tel" id="otpPhone" placeholder="07XXXXXXXX" required>
+                </div>
+                <div id="otpCodeGroup" class="form-group" style="display:none;">
+                    <label for="otpCode">رمز التحقق</label>
+                    <input type="text" id="otpCode" inputmode="numeric" placeholder="123456">
+                </div>
+                <button id="otpSendBtn" type="button" class="btn btn-primary" style="width: 100%;">إرسال رمز التحقق</button>
+                <button id="otpVerifyBtn" type="button" class="btn btn-secondary" style="width: 100%; display:none; margin-top:.5rem;">تأكيد الدخول</button>
+                <div id="errorMessage" class="error-message" style="display:none;"></div>
+            </form>
+
+            <div id="driverResult" class="auth-extra" style="display:none; margin-top: 1rem;">
+                <div class="stat-row">
+                    <div class="stat-card">
+                        <div class="stat-label">عدد الرحلات</div>
+                        <div id="tripCount" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">الرصيد (دينار)</div>
+                        <div id="driverBalance" class="stat-value">0.00</div>
+                    </div>
+                </div>
+                <div id="driverNameRow" style="margin-top: .75rem; text-align:center; font-weight: 600;"></div>
+                <div id="driverTrips" class="table-container" style="margin-top:1rem; display:none;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>النوع</th>
+                                <th>الأجرة</th>
+                                <th>العمولة</th>
+                                <th>الخصم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driverTripsBody">
+                            <tr><td colspan="5" class="no-data">لا توجد رحلات</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Supabase Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // Optionally inject credentials here for quick testing
+      window.SUPABASE_URL = window.SUPABASE_URL || 'https://YOUR_PROJECT_ID.supabase.co';
+      window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'YOUR_ANON_KEY';
+    </script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/driver-portal-auth.js"></script>
+</body>
+</html>

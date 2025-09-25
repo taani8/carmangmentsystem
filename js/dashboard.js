@@ -11,35 +11,47 @@ function initializePage() {
 
 async function loadDashboardData() {
     try {
+        const supa = window.supabaseClient;
         // Load drivers
-        const driversSnapshot = await db.collection('drivers').get();
-        dashboardData.drivers = driversSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        const { data: drivers, error: dErr } = await supa
+            .from('drivers')
+            .select('id, name, balance');
+        if (dErr) throw dErr;
+        dashboardData.drivers = (drivers || []).map(d => ({ id: d.id, name: d.name, balance: Number(d.balance || 0) }));
 
-        // Load today's trips
+        // Today's window in UTC
         const today = new Date();
         const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
-        const todayTripsSnapshot = await db.collection('trips')
-            .where('date', '>=', startOfDay)
-            .where('date', '<', endOfDay)
-            .orderBy('date', 'desc')
-            .limit(10)
-            .get();
-
-        dashboardData.todayTrips = todayTripsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const { data: todayTrips, error: tErr } = await supa
+            .from('trips')
+            .select('id, driver_name, trip_type, fare, commission, date')
+            .gte('date', startOfDay.toISOString())
+            .lt('date', endOfDay.toISOString())
+            .order('date', { ascending: false })
+            .limit(10);
+        if (tErr) throw tErr;
+        dashboardData.todayTrips = (todayTrips || []).map(t => ({
+            id: t.id,
+            driverName: t.driver_name,
+            tripType: t.trip_type,
+            fare: Number(t.fare || 0),
+            commission: Number(t.commission || 0),
+            date: t.date
         }));
 
-        // Load all trips for statistics
-        const allTripsSnapshot = await db.collection('trips').get();
-        dashboardData.trips = allTripsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const { data: allTrips, error: aErr } = await supa
+            .from('trips')
+            .select('id, driver_name, trip_type, fare, commission, date');
+        if (aErr) throw aErr;
+        dashboardData.trips = (allTrips || []).map(t => ({
+            id: t.id,
+            driverName: t.driver_name,
+            tripType: t.trip_type,
+            fare: Number(t.fare || 0),
+            commission: Number(t.commission || 0),
+            date: t.date
         }));
 
         updateDashboardUI();
@@ -113,8 +125,7 @@ function getArabicTripType(type) {
 
 function formatTime(date) {
     if (!date) return 'Unknown';
-    
-    const tripDate = date.toDate ? date.toDate() : new Date(date);
+    const tripDate = new Date(date);
     return tripDate.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',

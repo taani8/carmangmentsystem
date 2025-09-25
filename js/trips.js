@@ -47,12 +47,13 @@ function setupEventListeners() {
 
 async function loadDrivers() {
     try {
-        const snapshot = await db.collection('drivers').orderBy('name').get();
-        drivers = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-        
+        const supa = window.supabaseClient;
+        const { data, error } = await supa
+            .from('drivers')
+            .select('id, name')
+            .order('name', { ascending: true });
+        if (error) throw error;
+        drivers = (data || []).map(d => ({ id: d.id, name: d.name }));
         updateDriverDropdowns();
     } catch (error) {
         console.error('Error loading drivers:', error);
@@ -78,12 +79,22 @@ function updateDriverDropdowns() {
 
 async function loadTrips() {
     try {
-        const snapshot = await db.collection('trips').orderBy('date', 'desc').get();
-        trips = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const supa = window.supabaseClient;
+        const { data, error } = await supa
+            .from('trips')
+            .select('id, driver_id, driver_name, trip_type, fare, commission, deduction, date')
+            .order('date', { ascending: false });
+        if (error) throw error;
+        trips = (data || []).map(t => ({
+            id: t.id,
+            driverId: t.driver_id,
+            driverName: t.driver_name,
+            tripType: t.trip_type,
+            fare: Number(t.fare || 0),
+            commission: Number(t.commission || 0),
+            deduction: Number(t.deduction || 0),
+            date: t.date
         }));
-        
         filteredTrips = [...trips];
         updateTripsTable();
     } catch (error) {
@@ -227,39 +238,35 @@ async function saveTrip(e) {
     saveBtn.disabled = true;
     
     try {
-        const tripData = {
-            driverId,
-            driverName: driver.name,
-            tripType,
-            fare,
-            commission,
-            deduction,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
+        const supa = window.supabaseClient;
         if (editingTripId) {
-            // Update existing trip
-            const originalTrip = trips.find(t => t.id === editingTripId);
-            
-            // Update trip
-            await db.collection('trips').doc(editingTripId).update(tripData);
-            
-            // Adjust driver balance (reverse original deduction, apply new deduction)
+            const originalTrip = trips.find(t => t.id === editingTripId) || { deduction: 0 };
+            const { error: upErr } = await supa.from('trips').update({
+                driver_id: driverId,
+                driver_name: driver.name,
+                trip_type: tripType,
+                fare: fare,
+                commission: commission,
+                deduction: deduction
+            }).eq('id', editingTripId);
+            if (upErr) throw upErr;
             const balanceAdjustment = (originalTrip.deduction || 0) - deduction;
-            await db.collection('drivers').doc(driverId).update({
-                balance: firebase.firestore.FieldValue.increment(balanceAdjustment)
-            });
+            if (balanceAdjustment !== 0) {
+                await supa.rpc('adjust_driver_balance', { p_driver_id: driverId, p_amount: balanceAdjustment });
+            }
         } else {
-            // Add new trip
-            tripData.date = firebase.firestore.FieldValue.serverTimestamp();
-            tripData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            
-            await db.collection('trips').add(tripData);
-            
-            // Deduct from driver's balance
-            await db.collection('drivers').doc(driverId).update({
-                balance: firebase.firestore.FieldValue.increment(-deduction)
+            const { error: addErr } = await supa.from('trips').insert({
+                driver_id: driverId,
+                driver_name: driver.name,
+                trip_type: tripType,
+                fare: fare,
+                commission: commission,
+                deduction: deduction
             });
+            if (addErr) throw addErr;
+            if (deduction) {
+                await supa.rpc('adjust_driver_balance', { p_driver_id: driverId, p_amount: -deduction });
+            }
         }
         
         closeModals();
@@ -288,16 +295,14 @@ async function deleteTrip() {
     deleteBtn.disabled = true;
     
     try {
+        const supa = window.supabaseClient;
         const trip = trips.find(t => t.id === editingTripId);
         if (!trip) return;
-        
-        // Delete trip
-        await db.collection('trips').doc(editingTripId).delete();
-        
-        // Return deduction to driver's balance
-        await db.collection('drivers').doc(trip.driverId).update({
-            balance: firebase.firestore.FieldValue.increment(trip.deduction || 0)
-        });
+        const { error } = await supa.from('trips').delete().eq('id', editingTripId);
+        if (error) throw error;
+        if (trip.deduction) {
+            await supa.rpc('adjust_driver_balance', { p_driver_id: trip.driverId, p_amount: (trip.deduction || 0) });
+        }
         
         closeModals();
         loadTrips();

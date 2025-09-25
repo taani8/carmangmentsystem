@@ -34,20 +34,32 @@ function setupEventListeners() {
 
 async function loadReportsData() {
     try {
-        // Load trips
-        const tripsSnapshot = await db.collection('trips').orderBy('date', 'desc').get();
-        reportsData.trips = tripsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const supa = window.supabaseClient;
+        const [tripsRes, driversRes] = await Promise.all([
+            supa.from('trips').select('id, driver_id, driver_name, trip_type, fare, commission, deduction, date').order('date', { ascending: false }),
+            supa.from('drivers').select('id, name, phone, balance')
+        ]);
+        if (tripsRes.error) throw tripsRes.error;
+        if (driversRes.error) throw driversRes.error;
+
+        reportsData.trips = (tripsRes.data || []).map(t => ({
+            id: t.id,
+            driverId: t.driver_id,
+            driverName: t.driver_name,
+            tripType: t.trip_type,
+            fare: Number(t.fare || 0),
+            commission: Number(t.commission || 0),
+            deduction: Number(t.deduction || 0),
+            date: t.date
         }));
-        
-        // Load drivers
-        const driversSnapshot = await db.collection('drivers').get();
-        reportsData.drivers = driversSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+
+        reportsData.drivers = (driversRes.data || []).map(d => ({
+            id: d.id,
+            name: d.name,
+            phone: d.phone,
+            balance: Number(d.balance || 0)
         }));
-        
+
         applyFilters();
     } catch (error) {
         console.error('Error loading reports data:', error);
@@ -109,7 +121,7 @@ function applyFilters() {
     const { trips, dateRange } = reportsData;
     
     reportsData.filteredTrips = trips.filter(trip => {
-        const tripDate = trip.date.toDate ? trip.date.toDate() : new Date(trip.date);
+        const tripDate = new Date(trip.date);
         
         if (dateRange.start && tripDate < dateRange.start) return false;
         if (dateRange.end && tripDate > dateRange.end) return false;

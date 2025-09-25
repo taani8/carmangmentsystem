@@ -62,12 +62,19 @@ function setupEventListeners() {
 
 async function loadDrivers() {
     try {
-        const snapshot = await db.collection('drivers').orderBy('name').get();
-        drivers = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const supa = window.supabaseClient;
+        const { data, error } = await supa
+            .from('drivers')
+            .select('id, name, phone, balance, photo_url')
+            .order('name', { ascending: true });
+        if (error) throw error;
+        drivers = (data || []).map(d => ({
+            id: d.id,
+            name: d.name,
+            phone: d.phone,
+            balance: Number(d.balance || 0),
+            photoURL: d.photo_url || null
         }));
-        
         filteredDrivers = [...drivers];
         updateDriversDisplay();
     } catch (error) {
@@ -256,40 +263,25 @@ async function saveDriver(e) {
     saveBtn.disabled = true;
     
     try {
+        const supa = window.supabaseClient;
         const driverData = {
-            name,
-            phone,
-            balance,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            name: name,
+            phone: phone,
+            balance: balance
         };
-        
-        // Handle photo upload
-        if (selectedPhotoFile) {
-            const photoRef = firebase.storage().ref().child(`driver-photos/${Date.now()}_${selectedPhotoFile.name}`);
-            const uploadTask = await photoRef.put(selectedPhotoFile);
-            const photoURL = await uploadTask.ref.getDownloadURL();
-            driverData.photoURL = photoURL;
+        // Note: photo upload to Supabase Storage can be added later
+        if (selectedPhotoFile && selectedPhotoFile !== 'DELETE') {
+            console.warn('Photo upload not implemented with Supabase Storage in this build.');
         }
-        
         if (editingDriverId) {
-            // Update existing driver
-            const originalDriver = drivers.find(d => d.id === editingDriverId);
-            
-            // If updating photo, delete old photo from storage
-            if (selectedPhotoFile && originalDriver.photoURL) {
-                try {
-                    const oldPhotoRef = firebase.storage().refFromURL(originalDriver.photoURL);
-                    await oldPhotoRef.delete();
-                } catch (error) {
-                    console.log('Could not delete old photo:', error);
-                }
-            }
-            
-            await db.collection('drivers').doc(editingDriverId).update(driverData);
+            const updates = { ...driverData };
+            if (selectedPhotoFile === 'DELETE') updates.photo_url = null;
+            const { error } = await supa.from('drivers').update(updates).eq('id', editingDriverId);
+            if (error) throw error;
         } else {
-            // Add new driver
-            driverData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            await db.collection('drivers').add(driverData);
+            const inserts = { ...driverData };
+            const { error } = await supa.from('drivers').insert(inserts);
+            if (error) throw error;
         }
         
         closeModals();
@@ -320,18 +312,19 @@ async function deleteDriver() {
     deleteBtn.disabled = true;
     
     try {
-        // Check if driver has trips
-        const tripsSnapshot = await db.collection('trips')
-            .where('driverId', '==', editingDriverId)
-            .limit(1)
-            .get();
-        
-        if (!tripsSnapshot.empty) {
+        const supa = window.supabaseClient;
+        const { data: trips, error: tripsErr } = await supa
+            .from('trips')
+            .select('id')
+            .eq('driver_id', editingDriverId)
+            .limit(1);
+        if (tripsErr) throw tripsErr;
+        if (trips && trips.length > 0) {
             showErrorMessage('لا يمكن حذف سائق لديه رحلات موجودة');
             return;
         }
-        
-        await db.collection('drivers').doc(editingDriverId).delete();
+        const { error } = await supa.from('drivers').delete().eq('id', editingDriverId);
+        if (error) throw error;
         
         closeModals();
         loadDrivers();
