@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Store a minimal session locally
             localStorage.setItem('driver_session', JSON.stringify({ driverId, phone: phoneRaw }));
 
-            window.location.href = 'driver-dashboard.html';
+            window.location.href = 'dashboard.html';
         } catch (error) {
             console.error('verify OTP error', error);
             showError('رمز غير صحيح أو منتهي. حاول مرة أخرى');
