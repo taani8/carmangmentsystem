@@ -6,19 +6,26 @@ let selectedPhotoFile = null;
 let currentView = 'cards';
 
 function initializePage() {
+    // Run only on pages that contain drivers UI
+    if (!document.getElementById('driversCards') && !document.getElementById('driversTableBody')) {
+        return;
+    }
     loadDrivers();
     setupEventListeners();
 }
 
 function setupEventListeners() {
     // Add driver button
-    document.getElementById('addDriverBtn').addEventListener('click', openAddDriverModal);
+    const addDriverBtn = document.getElementById('addDriverBtn');
+    if (addDriverBtn) addDriverBtn.addEventListener('click', openAddDriverModal);
     
     // Search input
-    document.getElementById('searchInput').addEventListener('input', filterDrivers);
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.addEventListener('input', filterDrivers);
     
     // Balance filter
-    document.getElementById('balanceFilter').addEventListener('change', filterDrivers);
+    const balanceFilter = document.getElementById('balanceFilter');
+    if (balanceFilter) balanceFilter.addEventListener('change', filterDrivers);
     
     // View toggle
     document.querySelectorAll('.view-btn').forEach(btn => {
@@ -37,18 +44,24 @@ function setupEventListeners() {
     });
     
     // Cancel buttons
-    document.getElementById('cancelBtn').addEventListener('click', closeModals);
-    document.getElementById('cancelDeleteBtn').addEventListener('click', closeModals);
+    const cancelBtn = document.getElementById('cancelBtn');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModals);
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', closeModals);
     
     // Form submit
-    document.getElementById('driverForm').addEventListener('submit', saveDriver);
+    const driverForm = document.getElementById('driverForm');
+    if (driverForm) driverForm.addEventListener('submit', saveDriver);
     
     // Delete confirmation
-    document.getElementById('confirmDeleteBtn').addEventListener('click', deleteDriver);
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', deleteDriver);
     
     // Photo upload handling
-    document.getElementById('driverPhoto').addEventListener('change', handlePhotoSelect);
-    document.getElementById('removePhoto').addEventListener('click', removePhoto);
+    const driverPhoto = document.getElementById('driverPhoto');
+    if (driverPhoto) driverPhoto.addEventListener('change', handlePhotoSelect);
+    const removePhotoBtn = document.getElementById('removePhoto');
+    if (removePhotoBtn) removePhotoBtn.addEventListener('click', removePhoto);
     
     // Close modal when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
@@ -264,6 +277,9 @@ async function saveDriver(e) {
     
     try {
         const supa = window.supabaseClient;
+        if (!supa) {
+            throw new Error('Supabase client غير مُهيأ. تحقق من الاتصال.');
+        }
         const driverData = {
             name: name,
             phone: phone,
@@ -290,7 +306,8 @@ async function saveDriver(e) {
         showSuccessMessage(editingDriverId ? 'تم تحديث السائق بنجاح' : 'تم إضافة السائق بنجاح');
     } catch (error) {
         console.error('Error saving driver:', error);
-        showErrorMessage('فشل في حفظ السائق');
+        const friendly = resolveSupabaseError(error);
+        showErrorMessage(friendly);
     } finally {
         saveBtn.textContent = originalText;
         saveBtn.disabled = false;
@@ -356,6 +373,35 @@ function showErrorMessage(message) {
 function showSuccessMessage(message) {
     // You can implement a toast notification system here
     alert(message);
+}
+
+function resolveSupabaseError(error) {
+    try {
+        const code = (error && (error.code || error.status)) || '';
+        const message = (error && (error.message || error.msg || error.error)) || '';
+        const details = (error && (error.details || error.hint)) || '';
+        const raw = [message, details].filter(Boolean).join(' - ');
+
+        // Duplicate unique key (e.g., phone)
+        if (code === '23505' || /duplicate key value/i.test(message)) {
+            return 'رقم الهاتف مسجل بالفعل. يرجى استخدام رقم مختلف.';
+        }
+        // RLS / permissions
+        if (/row-level security|RLS|permission denied|not allowed/i.test(raw)) {
+            return 'ليست لديك صلاحية لإضافة/تعديل السائق. الرجاء تسجيل الدخول كمشرف.';
+        }
+        // Validation
+        if (/invalid input|type mismatch|null value/i.test(raw)) {
+            return 'بيانات غير صالحة. تحقق من الحقول وأعد المحاولة.';
+        }
+        // Missing client
+        if (/Supabase client غير مُهيأ/i.test(message)) {
+            return message;
+        }
+        return 'فشل في حفظ السائق' + (raw ? `: ${raw}` : '');
+    } catch (_) {
+        return 'فشل في حفظ السائق';
+    }
 }
 
 function handlePhotoSelect(e) {
