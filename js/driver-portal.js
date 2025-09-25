@@ -27,31 +27,30 @@ document.addEventListener('DOMContentLoaded', function() {
         resultSection.style.display = 'none';
 
         try {
-            // Find driver by phone
-            const driverSnap = await db.collection('drivers')
-                .where('phone', '==', normalizedPhone)
-                .limit(1)
-                .get();
+            if (!window.supabaseClient) {
+                console.error('Supabase client not found');
+                return showError('إعداد الاتصال غير مكتمل');
+            }
 
-            if (driverSnap.empty) {
+            const { data, error } = await window.supabaseClient
+                .rpc('get_driver_summary', { p_phone: normalizedPhone });
+            if (error) {
+                console.error('RPC error:', error);
+                return showError('فشل جلب البيانات');
+            }
+
+            if (!data || data.length === 0) {
                 return showError('لم يتم العثور على سائق بهذا الرقم');
             }
 
-            const driverDoc = driverSnap.docs[0];
-            const driver = { id: driverDoc.id, ...driverDoc.data() };
+            const summary = data[0];
+            const tripCount = summary.trip_count || 0;
+            const balance = Number(summary.balance || 0);
+            const name = summary.name || '';
 
-            // Count trips for this driver
-            const tripsSnap = await db.collection('trips')
-                .where('driverId', '==', driver.id)
-                .get();
-
-            const tripCount = tripsSnap.size;
-            const balance = driver.balance || 0;
-
-            // Update UI
             tripCountEl.textContent = String(tripCount);
-            balanceEl.textContent = Number(balance).toFixed(2);
-            driverNameRow.textContent = driver.name ? `السائق: ${driver.name}` : '';
+            balanceEl.textContent = balance.toFixed(2);
+            driverNameRow.textContent = name ? `السائق: ${name}` : '';
             resultSection.style.display = 'block';
         } catch (err) {
             console.error('Driver lookup error:', err);
