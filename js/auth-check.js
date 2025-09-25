@@ -10,12 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             const { data } = await supa.auth.getSession();
             // Enforce admin login on protected pages that include this script
-            if (!data || !data.session) { window.location.href = 'admin-login.html'; return; }
+            if (!data || !data.session) { window.location.href = 'login.html'; return; }
             initializePage();
         } catch (e) {
             console.error('Auth state error:', e);
             // Fallback to login if auth state cannot be determined
-            window.location.href = 'admin-login.html';
+            window.location.href = 'login.html';
         }
     })();
 

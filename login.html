@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body dir="rtl">
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="public/logo.jpg" alt="Ride On Time" class="auth-logo">
+                <h1>تسجيل الدخول</h1>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" data-tab="admin">المشرف</button>
+                <button class="tab-button" data-tab="driver">السائق</button>
+            </div>
+
+            <div class="tab-content active" id="tab-admin">
+                <form id="adminLoginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="adminEmail">البريد الإلكتروني</label>
+                        <input type="email" id="adminEmail" placeholder="example@domain.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">كلمة المرور</label>
+                        <input type="password" id="adminPassword" placeholder="••••••••" required>
+                    </div>
+                    <div id="errorMessage" class="error-message" style="display:none"></div>
+                    <button id="adminLoginBtn" type="submit" class="btn btn-primary">دخول المشرف</button>
+                </form>
+            </div>
+
+            <div class="tab-content" id="tab-driver">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label for="driverPhone">رقم الهاتف</label>
+                        <input type="tel" id="driverPhone" placeholder="079xxxxxxx" inputmode="numeric">
+                    </div>
+                    <div class="form-group" id="otpSection" style="display:none">
+                        <label for="driverOtp">رمز التحقق</label>
+                        <input type="text" id="driverOtp" placeholder="123456" inputmode="numeric">
+                    </div>
+                    <div id="driverError" class="error-message" style="display:none"></div>
+                    <div id="recaptcha-container"></div>
+                    <div class="actions">
+                        <button id="sendOtpBtn" type="button" class="btn btn-primary">إرسال الرمز</button>
+                        <button id="verifyOtpBtn" type="button" class="btn btn-secondary" style="display:none">تأكيد الدخول</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin (Supabase) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+
+    <!-- Driver (Firebase) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+
+    <!-- Tabs and auth wiring -->
+    <script src="js/unified-login.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/driver-auth-unified.js"></script>
+</body>
+</html>
