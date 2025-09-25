@@ -1,21 +1,37 @@
 // Authentication check for protected pages (Supabase)
 document.addEventListener('DOMContentLoaded', function() {
     const supa = window.supabaseClient;
-    
+    const path = (location.pathname || '').split('/').pop() || '';
+
     (async function initAuth() {
         try {
+            // Allow driver session on dashboard only
+            const driverSession = (function() {
+                try {
+                    const raw = localStorage.getItem('driver_session');
+                    return raw ? JSON.parse(raw) : null;
+                } catch (_) { return null; }
+            })();
+
+            if (driverSession && path === 'dashboard.html') {
+                if (typeof window.initializeDriverDashboard === 'function') {
+                    window.initializeDriverDashboard();
+                }
+                return;
+            }
+
             if (!supa) {
-                console.warn('Supabase client not found; continuing without auth gate');
-                return initializePage();
+                console.warn('Supabase client not found; continuing without admin auth gate');
+                return typeof initializePage === 'function' ? initializePage() : undefined;
             }
             const { data } = await supa.auth.getSession();
             // Enforce admin login on protected pages that include this script
-            if (!data || !data.session) { window.location.href = 'admin-login.html'; return; }
-            initializePage();
+            if (!data || !data.session) { window.location.href = 'login.html'; return; }
+            if (typeof initializePage === 'function') initializePage();
         } catch (e) {
             console.error('Auth state error:', e);
             // Fallback to login if auth state cannot be determined
-            window.location.href = 'admin-login.html';
+            window.location.href = 'login.html';
         }
     })();
 
@@ -25,7 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutBtn.addEventListener('click', async function() {
             try {
                 if (supa) await supa.auth.signOut();
-                window.location.href = 'driver.html';
+                try { localStorage.removeItem('driver_session'); } catch (_) {}
+                window.location.href = 'login.html';
             } catch (error) {
                 console.error('Logout error:', error);
             }

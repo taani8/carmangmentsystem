@@ -7,14 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.removeItem('driver_session');
                 try { await auth.signOut(); } catch (_) {}
             } finally {
-                window.location.href = 'driver-login.html';
+                window.location.href = 'login.html';
             }
         });
     }
 
     const session = getDriverSession();
     if (!session) {
-        window.location.href = 'driver-login.html';
+        window.location.href = 'login.html';
         return;
     }
 });
